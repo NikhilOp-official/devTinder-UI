@@ -9,8 +9,12 @@ const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    getFeed();
+  }, []);
+
   const getFeed = async () => {
-    if (feed) return;
+    // if (feed) return;
     try {
       const res = await axios.get(BASE_URL + "/feed", {
         withCredentials: true,
@@ -20,20 +24,15 @@ const Feed = () => {
       console.error("Error getting feed", error);
     }
   };
-  useEffect(() => {
-    getFeed();
-  }, []);
 
   if (!feed) return;
-  if (feed.length === 0) {
+  if (feed?.length === 0) {
     return <h2 className="flex justify-center my-10">No new users found!</h2>;
   }
 
   return (
     <div className="flex   overflow-hidden overflow-y-scroll items-center justify-center gap-10 my-10">
-      {/* {feed?.map((f) => ( */}
-      <UserCard user={feed[0]} />
-      {/* ))} */}
+      {feed && <UserCard user={feed[0]} />}
     </div>
   );
 };
