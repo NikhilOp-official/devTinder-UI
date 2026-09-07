@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("Nikhil@123");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [isLoginForm, setIsLoginForm] = useState(false);
+  const [isLoginForm, setIsLoginForm] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
