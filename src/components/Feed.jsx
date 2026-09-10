@@ -30,7 +30,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="flex   overflow-hidden overflow-y-scroll items-center justify-center gap-10 my-10">
+    <div className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10">
       {feed && <UserCard user={feed[0]} />}
     </div>
   );

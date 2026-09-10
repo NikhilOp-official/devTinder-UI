@@ -9,7 +9,9 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [error, setError] = useState(null);
+  const [isTargetOnline, setIsTargetOnline] = useState(false);
   const socketRef = useRef(null);
+  const lastMessageRef = useRef(null);
 
   const { targetUserId } = useParams();
   const user = useSelector((store) => store.user);
@@ -42,13 +44,28 @@ const Chat = () => {
   }, [fetchChatMessages]);
 
   useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
+
+  useEffect(() => {
     if (!userId) return;
+    setIsTargetOnline(false);
     const socket = createSocketConnection();
     socketRef.current = socket;
     socket.emit("joinChat", { targetUserId });
 
     socket.on("messageReceived", (message) => {
       setMessages((currentMessages) => [...currentMessages, message]);
+    });
+    socket.on("presenceStatus", ({ userId: presenceUserId, isOnline }) => {
+      if (String(presenceUserId) === String(targetUserId)) {
+        setIsTargetOnline(isOnline);
+      }
+    });
+    socket.on("presenceUpdate", ({ userId: presenceUserId, isOnline }) => {
+      if (String(presenceUserId) === String(targetUserId)) {
+        setIsTargetOnline(isOnline);
+      }
     });
     socket.on("chatError", ({ message }) => setError(message));
     return () => {
@@ -67,6 +84,9 @@ const Chat = () => {
     socketRef.current.emit("sendMessage", { targetUserId, text: newMessage });
 
     setNewMessage("");
+    requestAnimationFrame(() => {
+      lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    });
   };
 
   return (
@@ -82,7 +102,9 @@ const Chat = () => {
 
           <div className="flex-1">
             <h1 className="font-bold text-lg">Chat</h1>
-            <p className="text-xs text-success">● Online</p>
+            <p className={`text-xs ${isTargetOnline ? "text-success" : "text-base-content/50"}`}>
+              ● {isTargetOnline ? "Online" : "Offline"}
+            </p>
           </div>
 
           <button className="btn btn-ghost btn-circle">⋮</button>
@@ -120,6 +142,7 @@ const Chat = () => {
               </div>
             </div>
           ))}
+          <div ref={lastMessageRef} aria-hidden="true" />
         </div>
 
         {/* Input */}

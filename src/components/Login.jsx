@@ -55,8 +55,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center  my-10">
-      <div className="card bg-base-300 w-96 shadow-xl">
+    <div className="flex justify-center px-4 py-8 sm:py-10">
+      <div className="card w-full max-w-md bg-base-300 shadow-xl">
         <div className="card-body">
           <h2 className="card-title justify-center text-2xl font-bold">
             {isLoginForm ? "Login" : "Sign Up"}
@@ -64,7 +64,7 @@ const Login = () => {
           <div className=" flex  flex-col gap-3">
             {!isLoginForm && (
               <>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">First Name :</span>
                   </div>
@@ -74,10 +74,10 @@ const Login = () => {
                     onChange={(e) => {
                       setFirstName(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">Last Name :</span>
                   </div>
@@ -87,12 +87,12 @@ const Login = () => {
                     onChange={(e) => {
                       setLastName(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
               </>
             )}
-            <label className="form-control w-full max-w-xs">
+            <label className="form-control w-full">
               <div className="label">
                 <span className="label-text">Email Id :</span>
               </div>
@@ -102,10 +102,10 @@ const Login = () => {
                 onChange={(e) => {
                   setEmailId(e.target.value);
                 }}
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered w-full"
               />
             </label>
-            <label className="form-control w-full max-w-xs">
+            <label className="form-control w-full">
               <div className="label">
                 <span className="label-text">Password :</span>
               </div>
@@ -115,7 +115,7 @@ const Login = () => {
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered w-full"
               />
             </label>
             <span className="font-bold text-red-500">{error}</span>

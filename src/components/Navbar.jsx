@@ -26,15 +26,15 @@ const Navbar = () => {
     }
   };
   return (
-    <div className="navbar bg-base-300">
+    <div className="navbar min-h-16 bg-base-300 px-3 sm:px-6">
       <div className="flex-1">
-        <Link to={"/"} className="btn btn-ghost text-xl">
+        <Link to={"/"} className="btn btn-ghost px-2 text-lg sm:text-xl">
           🧑🏻‍💻 devTinder
         </Link>
       </div>
       {user && (
-        <div className="flex-none gap-2">
-          <div className="form-control">Welcome ,{user.firstName}</div>
+        <div className="flex-none gap-1 sm:gap-2">
+          <div className="hidden max-w-36 truncate sm:block">Welcome, {user.firstName}</div>
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}

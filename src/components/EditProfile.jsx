@@ -43,15 +43,15 @@ const EditProfile = ({ user }) => {
 
   return (
     <>
-      <div className="flex gap-10 justify-center my-10">
-        <div className="flex justify-center  ">
-          <div className="card bg-base-300 w-96 shadow-xl">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-8 px-4 py-8 sm:py-10 lg:flex-row lg:items-start lg:justify-center">
+        <div className="flex w-full justify-center lg:w-auto">
+          <div className="card w-full max-w-md bg-base-300 shadow-xl">
             <div className="card-body">
               <h2 className="card-title justify-center text-2xl font-bold">
                 Edit Profile
               </h2>
               <div className=" flex  flex-col gap-3">
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">First Name</span>
                   </div>
@@ -60,10 +60,10 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setFirstName(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">Last Name</span>
                   </div>
@@ -73,10 +73,10 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setLastName(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">Photo Url</span>
                   </div>
@@ -86,10 +86,10 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setPhotoUrl(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">Age</span>
                   </div>
@@ -99,10 +99,10 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setAge(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">gender</span>
                   </div>
@@ -111,7 +111,7 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setGender(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   >
                     {/* <option value="">Prefer not to say</option> */}
                     <option value="male">Male</option>
@@ -119,7 +119,7 @@ const EditProfile = ({ user }) => {
                     <option value="others">Other</option>
                   </select>
                 </label>
-                <label className="form-control w-full max-w-xs">
+                <label className="form-control w-full">
                   <div className="label">
                     <span className="label-text">About</span>
                   </div>
@@ -129,7 +129,7 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => {
                       setAbout(e.target.value);
                     }}
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full"
                   />
                 </label>
                 <span className="font-bold text-red-500">{error}</span>
@@ -150,6 +150,7 @@ const EditProfile = ({ user }) => {
         <div>
           <UserCard
             user={{ firstName, lastName, age, gender, about, photoUrl }}
+            isProfile={true}
           />
         </div>
       </div>
