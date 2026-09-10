@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "../utils/constants";
 import { addRequests } from "../utils/store/slices/requestSlice";
@@ -7,10 +7,11 @@ import { addRequests } from "../utils/store/slices/requestSlice";
 const Requests = () => {
   const dispatch = useDispatch();
   const requests = useSelector((store) => store?.requests);
+  const [error, setError] = useState(null);
 
   const reviewRequest = async (status, _id) => {
     try {
-      const res = await axios.post(
+      await axios.post(
         BASE_URL + "/request/review/" + status + "/" + _id,
         {},
         {
@@ -19,10 +20,12 @@ const Requests = () => {
       );
 
       fetchRequests();
-    } catch (err) {}
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data || "Unable to review request");
+    }
   };
 
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       const res = await axios.get(BASE_URL + "/user/requests/received", {
         withCredentials: true,
@@ -31,11 +34,11 @@ const Requests = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchRequests();
-  }, []);
+  }, [fetchRequests]);
 
   if (!requests) return;
 
@@ -45,6 +48,7 @@ const Requests = () => {
   return (
     <div className="flex flex-col items-center my-10">
       <h1 className="text-2xl font-bold">Connection Requests</h1>
+      {error && <p className="mt-2 text-red-500">{error}</p>}
 
       <div className="w-full max-w-2xl">
         {requests?.map((r) => {
@@ -53,11 +57,11 @@ const Requests = () => {
           return (
             <div
               className="flex m-4 p-4 rounded-lg justify-between items-center bg-base-300"
-              key={r.id}
+              key={r._id}
             >
               <div>
                 <img
-                  src={photoUrl}
+                  src={photoUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
                   alt="photo"
                   className="w-20 h-20 rounded-full"
                 />

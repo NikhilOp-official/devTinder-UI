@@ -12,26 +12,23 @@ const Body = () => {
   const dispatch = useDispatch();
 
   const userData = useSelector((store) => store.user);
-  const fetchUser = async () => {
-    if (userData) {
-      return;
-    }
-    try {
-      const response = await axios.get(BASE_URL + "/profile", {
-        withCredentials: true,
-      });
-      dispatch(addUser(response.data));
-    } catch (error) {
-      if (error.status === 401) {
-        navigate("/login");
-      }
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const fetchUser = async () => {
+      if (userData) return;
+      try {
+        const response = await axios.get(BASE_URL + "/profile", {
+          withCredentials: true,
+        });
+        dispatch(addUser(response.data));
+      } catch (error) {
+        if (error.response?.status === 401) {
+          navigate("/login");
+        }
+        console.error(error);
+      }
+    };
     fetchUser();
-  }, []);
+  }, [dispatch, navigate, userData]);
 
   return (
     <div>

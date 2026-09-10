@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/store/slices/connectionSlice";
@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const Connections = () => {
   const dispatch = useDispatch();
   const connections = useSelector((store) => store?.connections);
-  const fetchConnections = async () => {
+  const fetchConnections = useCallback(async () => {
     try {
       const res = await axios.get(BASE_URL + "/user/connections", {
         withCredentials: true,
@@ -17,11 +17,11 @@ const Connections = () => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchConnections();
-  }, []);
+  }, [fetchConnections]);
   if (!connections) return;
   if (connections?.length === 0) {
     return <h1 className="text-2xl font-bold">No Connections found</h1>;
@@ -35,12 +35,12 @@ const Connections = () => {
           return (
             <div
               className="flex items-center justify-between m-4 p-4 rounded-lg bg-base-300"
-              key={c.id}
+              key={c._id}
             >
               <div className="flex items-center gap-3">
                 <div>
                   <img
-                    src={c.photoUrl}
+                    src={c.photoUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
                     alt="photo"
                     className="w-20 h-20 rounded-full"
                   />

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "../utils/constants";
 import { addfeed } from "../utils/store/slices/feedSlice";
@@ -9,12 +9,7 @@ const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getFeed();
-  }, []);
-
-  const getFeed = async () => {
-    // if (feed) return;
+  const getFeed = useCallback(async () => {
     try {
       const res = await axios.get(BASE_URL + "/feed", {
         withCredentials: true,
@@ -23,7 +18,11 @@ const Feed = () => {
     } catch (error) {
       console.error("Error getting feed", error);
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    getFeed();
+  }, [getFeed]);
 
   if (!feed) return;
   if (feed?.length === 0) {

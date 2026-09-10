@@ -6,8 +6,8 @@ import { addUser } from "../utils/store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [emailId, setEmailId] = useState("nikhil@gmail.com");
-  const [password, setPassword] = useState("Nikhil@123");
+  const [emailId, setEmailId] = useState("");
+  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -31,7 +31,7 @@ const Login = () => {
       await dispatch(addUser(response?.data?.data));
       navigate("/");
     } catch (error) {
-      setError(error?.response.data);
+      setError(error?.response?.data?.message || error?.response?.data || "Unable to log in");
       console.error("an error occured");
     }
   };
@@ -49,7 +49,7 @@ const Login = () => {
       await dispatch(addUser(response?.data?.data));
       navigate("/profile");
     } catch (error) {
-      setError(error?.response.data);
+      setError(error?.response?.data?.message || error?.response?.data || "Unable to sign up");
       console.error("an error occured");
     }
   };
@@ -122,7 +122,7 @@ const Login = () => {
 
             <div className="card-actions justify-center my-2">
               <button
-                onClick={isLoginForm ? handleLogin : handleSignup}
+              onClick={isLoginForm ? handleLogin : handleSignup}
                 className="btn btn-primary"
               >
                 {isLoginForm ? "Login" : "Sign Up"}

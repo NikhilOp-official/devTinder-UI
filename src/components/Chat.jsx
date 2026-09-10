@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
@@ -8,12 +8,14 @@ import { BASE_URL } from "../utils/constants";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [error, setError] = useState(null);
+  const socketRef = useRef(null);
 
   const { targetUserId } = useParams();
   const user = useSelector((store) => store.user);
   const userId = user?._id;
 
-  const fetchChatMessages = async () => {
+  const fetchChatMessages = useCallback(async () => {
     try {
       const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
         withCredentials: true,
@@ -21,45 +23,48 @@ const Chat = () => {
 
       const chatMessages = chat?.data?.messages?.map((message) => {
         return {
+          _id: message?._id,
+          senderId: message?.senderId?._id,
           firstName: message?.senderId?.firstName,
           lastName: message?.senderId?.lastName,
           text: message?.text,
+          createdAt: message?.createdAt,
         };
       });
-      setMessages(chatMessages);
+      setMessages(chatMessages || []);
     } catch (error) {
-      console.error("Error getting chat messages");
+      setError(error.response?.data?.message || "Unable to load chat messages");
     }
-  };
-  console.log("xnjnc", messages);
+  }, [targetUserId]);
+
   useEffect(() => {
     fetchChatMessages();
-  }, []);
+  }, [fetchChatMessages]);
+
   useEffect(() => {
     if (!userId) return;
     const socket = createSocketConnection();
-    socket.emit("joinChat", { userId, targetUserId });
+    socketRef.current = socket;
+    socket.emit("joinChat", { targetUserId });
 
-    socket.on("messageReceived", ({ firstName, lastName, text }) => {
-      console.log(firstName + " :" + text);
-      setMessages((messages) => [...messages, { firstName, lastName, text }]);
+    socket.on("messageReceived", (message) => {
+      setMessages((currentMessages) => [...currentMessages, message]);
     });
+    socket.on("chatError", ({ message }) => setError(message));
     return () => {
       socket.disconnect();
+      socketRef.current = null;
     };
   }, [userId, targetUserId]);
 
   const sendMessage = () => {
     if (!newMessage.trim()) return;
 
-    const socket = createSocketConnection();
-    socket.emit("sendMessage", {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      userId,
-      targetUserId,
-      text: newMessage,
-    });
+    if (!socketRef.current) {
+      setError("Chat connection is not ready. Please try again.");
+      return;
+    }
+    socketRef.current.emit("sendMessage", { targetUserId, text: newMessage });
 
     setNewMessage("");
   };
@@ -85,30 +90,33 @@ const Chat = () => {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-5 space-y-2">
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
           {messages.map((message, index) => (
             <div
               key={index}
               className={`chat ${
-                message.firstName === user?.firstName
+                String(message.senderId) === String(userId)
                   ? "chat-end"
                   : "chat-start"
               }`}
             >
               <div className="chat-header text-xs opacity-60 mb-1">
                 {message.firstName + " " + message.lastName}
-                <time className="ml-2">2 hours ago</time>
+                <time className="ml-2">
+                  {message.createdAt ? new Date(message.createdAt).toLocaleTimeString() : ""}
+                </time>
               </div>
 
               <div
                 className={`chat-bubble ${
-                  message.sender === "me" ? "chat-bubble-primary" : ""
+                  String(message.senderId) === String(userId) ? "chat-bubble-primary" : ""
                 }`}
               >
                 {message.text}
               </div>
 
               <div className="chat-footer opacity-50 text-xs mt-1">
-                {message.sender === "me" ? "Seen" : "Delivered"}
+                {String(message.senderId) === String(userId) ? "Sent" : "Received"}
               </div>
             </div>
           ))}

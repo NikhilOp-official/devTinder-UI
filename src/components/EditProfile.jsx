@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import UserCard from "./UserCard";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -31,7 +32,11 @@ const EditProfile = ({ user }) => {
         setShowToast(false);
       }, 1000);
     } catch (error) {
-      setError(error.response.data);
+      setError(
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Unable to save profile",
+      );
       console.error(error);
     }
   };
@@ -52,7 +57,6 @@ const EditProfile = ({ user }) => {
                   </div>
                   <input
                     value={firstName}
-                    type="text"
                     onChange={(e) => {
                       setFirstName(e.target.value);
                     }}
@@ -102,14 +106,18 @@ const EditProfile = ({ user }) => {
                   <div className="label">
                     <span className="label-text">gender</span>
                   </div>
-                  <input
+                  <select
                     value={gender}
-                    type="text"
                     onChange={(e) => {
                       setGender(e.target.value);
                     }}
                     className="input input-bordered w-full max-w-xs"
-                  />
+                  >
+                    {/* <option value="">Prefer not to say</option> */}
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Other</option>
+                  </select>
                 </label>
                 <label className="form-control w-full max-w-xs">
                   <div className="label">
@@ -160,3 +168,14 @@ const EditProfile = ({ user }) => {
 };
 
 export default EditProfile;
+
+EditProfile.propTypes = {
+  user: PropTypes.shape({
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    photoUrl: PropTypes.string,
+    age: PropTypes.number,
+    gender: PropTypes.string,
+    about: PropTypes.string,
+  }).isRequired,
+};
